@@ -3,73 +3,80 @@ class node(object):
         self.pai       = pai
 
         self.puzzle    = puzzle
+        
+        self.esquerda = None
+        self.direita  = None
+        self.cima     = None
+        self.baixo    = None
+
         self.visitado  = visitado
 
         self.anterior  = anterior
         self.proximo   = proximo
 
 class lista(object):
-    head = node;
-    tail = node;
+    __head = None;
+    __tail = None;
 
     #Novo item no inico da lista
-    def inserePrimeiro(self, v1, v2, pai):
-        novo_no = node(pai,v1,v2,None,None)
+    def inserePrimeiro(self, puzzle, visitado=None, pai=None):
 
-        if self.head == None:
-            self.tail = novo_no
+        novo_no = node(pai, puzzle, visitado, None, None)
+
+        if self.__head == None:
+            self.__tail = novo_no
         else:
-            novo_no.proximo = self.head
-            self.head.anterior = self.tail
+            novo_no.proximo = self.__head
+            self.__head.anterior = self.__tail
         
-        self.tail = novo_no
+        self.__head  = novo_no
 
     #Noto item no final da lista
-    def insereUltimo(self, valor, visitado, pai):
+    def insereUltimo(self, valor, visitado=None, pai=None):
         novo_no = node(pai,valor,visitado)
 
-        if self.head == None:
-            self.head = novo_no
+        if self.__head == None:
+            self.__head = novo_no
         else:
-            self.tail.proximo = novo_no
-            novo_no.anterior = self.tail
+            self.__tail.proximo = novo_no
+            novo_no.anterior = self.__tail
         
-        self.tail = novo_no
+        self.__tail = novo_no
 
     #Remover item do inico da lista
     def deletaPrimeiro(self):
-        if self.head = None:
+        if self.__head == None:
             return None
         else:
-            node = self.head
+            node = self.__head
 
-            self.head = self.head.proximo
+            self.__head = self.__head.proximo
 
-            if self.head != None:
-                self.head.anterior = None
+            if self.__head != None:
+                self.__head.anterior = None
             else:
-                self.tail = None
+                self.__tail = None
 
             return node
             
     #Remover item do fim da lista
     def deletaUltimo(self):
-        if self.tail = None:
+        if self.__tail == None:
             return None
         else:
-            node = self.tail
+            node = self.__tail
 
-            self.tail = self.tail.anterior
-            if self.tail != None:
-                self.tail.proximo = None
+            self.__tail = self.__tail.anterior
+            if self.__tail != None:
+                self.__tail.proximo = None
             else:
-                self.head = None
+                self.__head = None
             
             return node
 
     #Verifica se a lista está vazia
     def vazia(self):
-        if self.head = None:
+        if self.__head == None:
             return True
         else:
             return False
@@ -78,9 +85,9 @@ class lista(object):
     def mostrarLista(self):
 
         saida = []
-        aux = self.head
+        aux = self.__head
         while aux != None:
-            saida.append(aux.puzzle)
+            saida.append(aux.puzzle.getConteudo())
             aux = aux.proximo
 
         return saida
@@ -88,20 +95,20 @@ class lista(object):
     #Mostar o caminho (?)
     def exibeCaminho(self):
         
-        aux = self.head
+        aux = self.__head
         saida = []
         
         while aux != None:
-            saida.append(aux.puzzle)
+            saida.append(aux.puzzle.getConteudo())
             aux = aux.proximo
         
         return saida
 
     #Busca o caminho ate um valor
     def caminhoValor(self,valor):
-        atual = self.head
+        atual = self.__head
 
-        while atual.puzzle != valor
+        while (atual.puzzle != valor):
             atual = atual.proximo
         
         caminho = []
@@ -116,26 +123,31 @@ class lista(object):
 
     #Retornar a cabeça da lista
     def primero(self):
-        return self.head
+        return self.__head
     
     #Retornar a cauda da lista 
     def ultimo(self):
-        return self.tail
+        return self.__tail
 
 
+superLista = lista()
 
 
+teste = [['x','4','2'],
+         ['3','1','5'],
+         ['6','7','8']]
 
+from eightpuzzle import *
 
+puzzleInicio = eightPuzzle(teste)       
 
+superLista.inserePrimeiro(puzzleInicio)
+superLista.insereUltimo(puzzleInicio)
+superLista.insereUltimo(puzzleInicio)
+superLista.insereUltimo(puzzleInicio)
+superLista.insereUltimo(puzzleInicio)
+superLista.insereUltimo(puzzleInicio)
 
+print(superLista.exibeCaminho())
 
-
-
-
-
-
-
-
-lista_teste = lista()
-lista_teste.inserePrimeiro(['1','2','3'],0,None)
+# uma_node = node(puzzle=puzzleInicio)

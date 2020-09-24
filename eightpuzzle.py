@@ -124,6 +124,7 @@ class eightPuzzle(object):
 
     def __init__(self,puzzle):
         self.setConteudo(puzzle)
+        
     def __str__(self):
         saida = ''
         
