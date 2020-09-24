@@ -1,153 +1,97 @@
 class node(object):
-    def __init__(self, pai=None, puzzle=None, visitado=None, anterior=None, proximo=None):
-        self.pai       = pai
+    def __init__(self, puzzle=None, keys = [None,None,None,None]):
 
         self.puzzle    = puzzle
-        
-        self.esquerda = None
-        self.direita  = None
-        self.cima     = None
-        self.baixo    = None
+        self.id_puzzle = str(puzzle)
 
-        self.visitado  = visitado
+        #Opcoes       #C   B    E    D  
+        self.keys = keys
 
-        self.anterior  = anterior
-        self.proximo   = proximo
 
-class lista(object):
-    __head = None;
-    __tail = None;
+# raizCima2 = node('123456723')
+# raizCima = node('123456798',[raizCima2,None,None,None])
+# raizbaixo = node('123456798')
+# raizesquerda = node('123456798')
+# raizdireita = node('123456798')
 
-    #Novo item no inico da lista
-    def inserePrimeiro(self, puzzle, visitado=None, pai=None):
+# raizPadrao = node('123456789',[raizCima,raizbaixo,raizesquerda,raizdireita])
 
-        novo_no = node(pai, puzzle, visitado, None, None)
 
-        if self.__head == None:
-            self.__tail = novo_no
-        else:
-            novo_no.proximo = self.__head
-            self.__head.anterior = self.__tail
-        
-        self.__head  = novo_no
-
-    #Noto item no final da lista
-    def insereUltimo(self, valor, visitado=None, pai=None):
-        novo_no = node(pai,valor,visitado)
-
-        if self.__head == None:
-            self.__head = novo_no
-        else:
-            self.__tail.proximo = novo_no
-            novo_no.anterior = self.__tail
-        
-        self.__tail = novo_no
-
-    #Remover item do inico da lista
-    def deletaPrimeiro(self):
-        if self.__head == None:
-            return None
-        else:
-            node = self.__head
-
-            self.__head = self.__head.proximo
-
-            if self.__head != None:
-                self.__head.anterior = None
-            else:
-                self.__tail = None
-
-            return node
-            
-    #Remover item do fim da lista
-    def deletaUltimo(self):
-        if self.__tail == None:
-            return None
-        else:
-            node = self.__tail
-
-            self.__tail = self.__tail.anterior
-            if self.__tail != None:
-                self.__tail.proximo = None
-            else:
-                self.__head = None
-            
-            return node
-
-    #Verifica se a lista está vazia
-    def vazia(self):
-        if self.__head == None:
-            return True
-        else:
-            return False
-        
-    #Mostrar o conteudo da lista
-    def mostrarLista(self):
-
-        saida = []
-        aux = self.__head
-        while aux != None:
-            saida.append(aux.puzzle.getConteudo())
-            aux = aux.proximo
-
-        return saida
+class tree(object):
+    __root = None
+    inseridos = []
     
-    #Mostar o caminho (?)
-    def exibeCaminho(self):
+    def __init__ (self,puzzle):
+        if(puzzle != None):
+            self.insereRoot(puzzle)
         
-        aux = self.__head
-        saida = []
-        
-        while aux != None:
-            saida.append(aux.puzzle.getConteudo())
-            aux = aux.proximo
-        
-        return saida
 
-    #Busca o caminho ate um valor
-    def caminhoValor(self,valor):
-        atual = self.__head
+    def insereRoot(self, puzzle):
+        self.__root = puzzle
+        self.inseridos.append(puzzle.id_puzzle)
 
-        while (atual.puzzle != valor):
-            atual = atual.proximo
-        
-        caminho = []
-        atual = atual.pai
+    def buscarPuzzle(self,id_puzzle):
+        if(self.__root != None):
+            aux = self.__root
+            
+            # Cima
+            i = 0
+            while i < 4: 
+                while (aux.keys[i] != None):
+                    if(aux.keys[i].id_puzzle == id_puzzle):
+                        return str(i)+" "+ aux.keys[i].id_puzzle
+                    else:
+                        aux.keys[i] = aux.keys[i].keys[i]
+                i = i + 1
+            return "Valor não encontrado"
 
-        while autal.pai is not None:
-            caminho.append(atual.puzzle)
-            atual = atual.pai
-        
-        caminho.append(atual.puzzle)
-        return caminho
+            # while aux != None:
+            #     if(aux.id_puzzle == id_puzzle):
+            #         return aux
+            #     else:
+            #         aux
+        else:
+            return ('Btree Empty')
 
-    #Retornar a cabeça da lista
-    def primero(self):
-        return self.__head
-    
-    #Retornar a cauda da lista 
-    def ultimo(self):
-        return self.__tail
+    def insereKeys(self, id_puzzle,keys):
+        if(self.__root != None):
+            aux = self.__root
+            
+            # Cima
+            i = 0
+            while i < 4: 
+                sair = 0
+                while (aux.keys[i] != None):
+                    if(aux.keys[i].id_puzzle == id_puzzle):
+                        sair = 1
+                        break
+                    else:
+                        aux.keys[i] = aux.keys[i].keys[i]
+                if(sair != 0):
+                    break
 
+                i = i + 1
+            if(aux == None):
+                print("Puzzle não encontrado")
+                return 1
+            else:
+                aux.keys = keys
 
-superLista = lista()
+                for x in range(4):
+                    if(aux.keys[x] != None):
+                        self.inseridos.append(aux.keys[x].id_puzzle)
 
+                return aux
+        else:
+            return ('Btree Empty')
 
-teste = [['x','4','2'],
-         ['3','1','5'],
-         ['6','7','8']]
+# nova_tree = tree(raizPadrao)
+# print(nova_tree.buscarPuzzle('123456723'))
 
-from eightpuzzle import *
+# raizbaixo2 = node('951753852')
 
-puzzleInicio = eightPuzzle(teste)       
+# nova_tree.insereKeys('123456723',[None,raizbaixo2,None,None])
 
-superLista.inserePrimeiro(puzzleInicio)
-superLista.insereUltimo(puzzleInicio)
-superLista.insereUltimo(puzzleInicio)
-superLista.insereUltimo(puzzleInicio)
-superLista.insereUltimo(puzzleInicio)
-superLista.insereUltimo(puzzleInicio)
+# print(nova_tree.buscarPuzzle('951753852'))
 
-print(superLista.exibeCaminho())
-
-# uma_node = node(puzzle=puzzleInicio)
+# print("Fim da arvore")
