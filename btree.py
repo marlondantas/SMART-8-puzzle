@@ -1,21 +1,13 @@
+import copy
 class node(object):
     def __init__(self, puzzle=None, keys = [None,None,None,None]):
+        self.pai = None
 
         self.puzzle    = puzzle
         self.id_puzzle = str(puzzle)
 
-        #Opcoes       #C   B    E    D  
+        #Opcoes       #C   B    D    E  
         self.keys = keys
-
-
-# raizCima2 = node('123456723')
-# raizCima = node('123456798',[raizCima2,None,None,None])
-# raizbaixo = node('123456798')
-# raizesquerda = node('123456798')
-# raizdireita = node('123456798')
-
-# raizPadrao = node('123456789',[raizCima,raizbaixo,raizesquerda,raizdireita])
-
 
 class tree(object):
     __root = None
@@ -24,74 +16,164 @@ class tree(object):
     def __init__ (self,puzzle):
         if(puzzle != None):
             self.insereRoot(puzzle)
-        
+    
+    def retornaRoot(self):
+        return self.__root   
 
     def insereRoot(self, puzzle):
         self.__root = puzzle
-        self.inseridos.append(puzzle.id_puzzle)
+        if puzzle.id_puzzle not in self.inseridos:
+            self.inseridos.append(puzzle.id_puzzle)
 
-    def buscarPuzzle(self,id_puzzle):
-        if(self.__root != None):
-            aux = self.__root
-            
-            # Cima
-            i = 0
-            while i < 4: 
-                while (aux.keys[i] != None):
-                    if(aux.keys[i].id_puzzle == id_puzzle):
-                        return str(i)+" "+ aux.keys[i].id_puzzle
-                    else:
-                        aux.keys[i] = aux.keys[i].keys[i]
-                i = i + 1
-            return "Valor não encontrado"
+    def irFolha(self,node):
+        #Arrumar - Problemas em chegar nas raizes....
 
-            # while aux != None:
-            #     if(aux.id_puzzle == id_puzzle):
-            #         return aux
-            #     else:
-            #         aux
+        if (len(self.inseridos) == 1):
+            #So tem a raiz, logo ela é a unica folha
+            return [self.retornaRoot()]
         else:
-            return ('Btree Empty')
+            saida = []
+            for x in self.inseridos:
+                nodde = copy.deepcopy(node)
+                nodde.id_puzzle = x
 
-    def insereKeys(self, id_puzzle,keys):
-        if(self.__root != None):
-            aux = self.__root
+                busca = self.buscarPuzzleReal(self.retornaRoot(),nodde)
+                if (busca.keys == [None,None,None,None]):
+                    saida.append(copy.deepcopy(busca))
             
-            # Cima
-            i = 0
-            while i < 4: 
-                sair = 0
-                while (aux.keys[i] != None):
-                    if(aux.keys[i].id_puzzle == id_puzzle):
-                        sair = 1
-                        break
-                    else:
-                        aux.keys[i] = aux.keys[i].keys[i]
-                if(sair != 0):
-                    break
+            return saida
 
-                i = i + 1
-            if(aux == None):
-                print("Puzzle não encontrado")
-                return 1
-            else:
-                aux.keys = keys
+    def buscarPuzzle(self,node_atual,node_buscado):
+        for movimento in range(4):
+            busca = copy.deepcopy(node_atual)
 
-                for x in range(4):
-                    if(aux.keys[x] != None):
-                        self.inseridos.append(aux.keys[x].id_puzzle)
+            while busca != None: 
+                if(busca.id_puzzle != node_buscado.id_puzzle):
+                    busca = busca.keys[movimento]
+                else:
+                    return busca
 
-                return aux
+        return None
+
+    def buscarRoot(self,node_atual = node()):
+        if node_atual.pai == None:
+            return node_atual
         else:
-            return ('Btree Empty')
+            return self.buscarRoot(node_atual.pai)
 
-# nova_tree = tree(raizPadrao)
-# print(nova_tree.buscarPuzzle('123456723'))
+    def buscarPuzzleReal(self,node_atual,node_buscado):
+        # print(node_atual.id_puzzle.upper(),"\\",node_buscado.id_puzzle.upper())
+        #Puxa a raiz aqui, duplica ela com deep copy avanca tudo?
+        
+        # print("Buscando",node_atual.id_puzzle.upper())
 
-# raizbaixo2 = node('951753852')
+        aux = None
 
-# nova_tree.insereKeys('123456723',[None,raizbaixo2,None,None])
+        if (node_atual.id_puzzle.upper() == node_buscado.id_puzzle.upper()):
+            return node_atual
+        else:
+            if (node_atual.keys[0] != None and aux == None):
+                aux = self.buscarPuzzleReal(node_atual.keys[0], node_buscado)
+            if (node_atual.keys[1] != None and aux == None):
+                aux = self.buscarPuzzleReal(node_atual.keys[1], node_buscado)
+            if (node_atual.keys[2] != None and aux == None):
+                aux = self.buscarPuzzleReal(node_atual.keys[2], node_buscado)
+            if (node_atual.keys[3] != None and aux == None):
+                aux = self.buscarPuzzleReal(node_atual.keys[3], node_buscado)
 
-# print(nova_tree.buscarPuzzle('951753852'))
+        return aux
 
-# print("Fim da arvore")
+    def inserir(self,node_atual, keys_valor):
+        """
+        Node que vai receber os valores
+        valores que serao alocados
+        """
+        if self.retornaRoot() is None:
+            #Se não tiver raiz, o node é inserido
+            node_atual.keys = keys_valor
+            self.__root = node_atual
+            
+        else:
+            for key in range(4):
+                if (keys_valor[key] != None and keys_valor[key].id_puzzle in self.inseridos):
+                    keys_valor[key] = None
+
+            aux = copy.deepcopy(self.buscarPuzzleReal(self.retornaRoot(),node_atual))
+
+            for chave in range(4):
+                if (keys_valor[chave] != None):
+                    keys_valor[chave].pai = aux
+
+                    ##inserir chaves
+                    if(keys_valor[chave].id_puzzle not in self.inseridos):
+                        self.inseridos.append(keys_valor[chave].id_puzzle)    
+
+            if (node_atual.id_puzzle not in self.inseridos):
+                self.inseridos.append(node_atual.id_puzzle)
+
+            aux.keys = keys_valor
+
+            self.insereRoot(self.buscarRoot(aux))
+
+    def mostarCaminho(self, node_final):
+        #Retonar o caminho de volta dos nodes até a raiz.
+        saida = []
+        node_final = self.buscarPuzzleReal(self.retornaRoot(),node_final)
+
+        while node_final.pai is not None:
+            saida.append(node_final)
+            node_final = node_final.pai
+
+        saida.append(self.retornaRoot())
+        return saida
+#Testes
+if __name__ == "__main__":
+    from eightpuzzle import *
+
+    no1 = node(eightPuzzle([['X','2','3'],
+                            ['1','5','6'], 
+                            ['4','7','8']]))
+                        #   raiz
+
+    no2 = node(eightPuzzle([['1','2','3'],
+                            ['x','5','6'], 
+                            ['4','7','8']]))
+    no3 = node(eightPuzzle([['2','X','3'],
+                            ['1','5','6'], 
+                            ['4','7','8']]))
+                        # nivel 4
+
+    no4 = node(eightPuzzle([['1','2','3'],
+                            ['4','5','6'], 
+                            ['X','7','8']]))
+
+    no5 = node(eightPuzzle([['1','2','3'],
+                            ['5','X','6'], 
+                            ['4','7','8']]))
+
+    no6 = node(eightPuzzle([['2','5','3'],
+                            ['1','X','6'], 
+                            ['4','7','8']]))
+
+    no7 = node(eightPuzzle([['2','3','X'],
+                            ['1','5','6'], 
+                            ['4','7','8']])) 
+                        #nivel 3        
+                                    
+    teste_arvore = tree(no1)
+
+    chaves = [no2,None,None,no3]
+    teste_arvore.inserir(no1,chaves)
+
+    chaves = [no4,no1,None,no5]
+    teste_arvore.inserir(no2,chaves)
+
+    chaves = [no6,no1,None,no7]
+    teste_arvore.inserir(no3,chaves)
+
+    aux = teste_arvore.buscarPuzzleReal(teste_arvore.retornaRoot(),no5)
+    print('aux:',aux)
+
+    print(teste_arvore.converterFolhas(teste_arvore.irFolha(teste_arvore.retornaRoot())))
+
+    print("FINAL")

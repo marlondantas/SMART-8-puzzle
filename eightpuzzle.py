@@ -1,6 +1,9 @@
+import copy
+
 class eightPuzzle(object):
     
     conteudo = []
+    opcoes = []
 
     eixoXeY = 0
     numeroMovimentos,ultimoMovimento = 0,''
@@ -22,6 +25,10 @@ class eightPuzzle(object):
         self.ultimoMovimento = movimento
 
         return True
+
+    def returnPuzzle(self,conteudo):
+        saida = eightPuzzle(conteudo)
+        return saida
 
     def moverCima(self):
         if(self.liberadaCima() == True):
@@ -113,7 +120,7 @@ class eightPuzzle(object):
         return self.conteudo
     
     def printConteudo(self):
-        print('|N:',self.numeroMovimentos,'|M:',self.ultimoMovimento)
+        # print('|N:',self.numeroMovimentos,'|M:',self.ultimoMovimento)
         print('----------------')
         for x in self.conteudo:
             print('|',end='')
@@ -122,9 +129,47 @@ class eightPuzzle(object):
             print()
         print('----------------')
 
-    def __init__(self,puzzle):
-        self.setConteudo(puzzle)
+    def __genRandom(self):
+        import random
+        saida = [[],
+                 [],
+                 []]
+
+        opcoes = ['1','2','3','4','5','6','7','8','X']
+
+        while opcoes != []:
+            for x in range(3):
+                saida[x] = [opcoes.pop(random.randint(0,len(opcoes)-1)),opcoes.pop(random.randint(0,len(opcoes)-1)),opcoes.pop(random.randint(0,len(opcoes)-1))]
         
+        return saida 
+
+    def __init__(self,puzzle,pai = 1):
+        if (puzzle == 'RANDOM'):
+            self.setConteudo(self.__genRandom())
+        else:
+            self.setConteudo(puzzle)
+
+            if(pai == 0):
+                self.opcoes = self.liberadaOpcoes()
+                for x in range(4):
+                    if(self.opcoes[x] == True):
+                        meuConteudo = copy.copy(self.getConteudo())
+                        novo = eightPuzzle(meuConteudo,1)
+
+                        if(x == 0):
+                            novo.moverCima()
+                        elif(x == 1):
+                            novo.moverBaixo()
+                        elif(x == 2):
+                            novo.moverEsquerda()
+                        else:    
+                            novo.moverDireita()
+
+                        self.opcoes[x] = novo
+                    else:
+                        self.opcoes[x] = None
+
+
     def __str__(self):
         saida = ''
         
@@ -134,28 +179,33 @@ class eightPuzzle(object):
         
         return saida
 
-# teste = [['x','4','2'],
-#          ['3','1','5'],
-#          ['6','7','8']]
 
-# puzzleInicio = eightPuzzle(teste)
+if __name__ == "__main__":
+    
+    puzzleInicio = eightPuzzle('RANDOM')
 
-# print("Movendo")
-# puzzleInicio.printConteudo()
+    teste = [['x','4','2'],
+             ['3','1','5'],
+             ['6','7','8']]
 
-# puzzleInicio.moverCima()#1
-# puzzleInicio.printConteudo()
+    # puzzleInicio = eightPuzzle(teste)
 
-# puzzleInicio.moverEsquerda()#2
-# puzzleInicio.printConteudo()
+    print("Movendo")
+    puzzleInicio.printConteudo()
 
-# puzzleInicio.moverEsquerda()#3
-# puzzleInicio.printConteudo()
+    puzzleInicio.moverCima()#1
+    puzzleInicio.printConteudo()
 
-# puzzleInicio.moverBaixo()#4
-# puzzleInicio.printConteudo()
+    puzzleInicio.moverEsquerda()#2
+    puzzleInicio.printConteudo()
 
-# puzzleInicio.moverDireita()#5
-# puzzleInicio.printConteudo()
+    puzzleInicio.moverEsquerda()#3
+    puzzleInicio.printConteudo()
 
-# print(puzzleInicio)
+    puzzleInicio.moverBaixo()#4
+    puzzleInicio.printConteudo()
+
+    puzzleInicio.moverDireita()#5
+    puzzleInicio.printConteudo()
+
+    print(puzzleInicio)
