@@ -3,8 +3,14 @@ import copy
 from btree import *
 from eightpuzzle import *
 
+from view import *
 
 class metodoBusca(object):
+
+    debug = 0
+    def __init__(self,debog=0):
+        self.debug = debog
+
     def gerarOpcoes(self,puzzle):
 
         chaves = []
@@ -47,12 +53,16 @@ class metodoBusca(object):
     
     def amplitude(self,inicio,fim,debug = 0):
 
+        vieww = View()
+
         arvore = tree(node(inicio))
         last_leaf = node(fim)
 
         #return None = ruim node = good
         while (arvore.buscarPuzzleReal(arvore.retornaRoot(), last_leaf) == None):   
+            vieww.progressBar('Número de Tentativas: ',vieww.addCount(),'Tempo:')
             #tem que add na arvore os novos caminhos
+            
             #pega o conteudo das folhas e bota na lista 
             folhas = copy.deepcopy(arvore.irFolha(arvore.retornaRoot()))
 
@@ -62,10 +72,10 @@ class metodoBusca(object):
                 opcoesFolhas = copy.deepcopy(self.gerarOpcoes(folhas[x].puzzle))
                 
                 arvore.inserir(folhas[x],opcoesFolhas)
-                if(debug == 1):
+                if(self.debug == 1):
                     print ("Folha:", folhas[x].id_puzzle)
             
-            if(debug == 1):
+            if(self.debug == 1):
                 print('Next ----------------------------------------------')
 
 
@@ -75,6 +85,18 @@ class metodoBusca(object):
 
         return arvore.mostarCaminho(last_leaf)
     
+    def profundidade(self, inicio, fim):
+        pass
+
+    def profundidade_limitada(self, inicio, fim):
+        pass
+
+    def aprofundamento_iterativo(self, inicio, fim):
+        pass
+
+    def bidirecional(self, inicio, fim):
+        pass
+
 if __name__ == "__main__":
     
     from eightpuzzle import *
