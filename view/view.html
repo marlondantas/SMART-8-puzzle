@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="bootstrap.css" rel="stylesheet">
+        <link href="view/bootstrap.css" rel="stylesheet">
+        <title>Eight puzzle</title>
+        <style>
+            ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            /* background-color: #333333; */
+            }
+            
+            li {
+            float: left;
+            }
+            
+            li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 16px;
+            text-decoration: none;
+            }
+            .minha_table_normal {
+                text-align: left;
+            }
+            /* li a:hover {
+            /* background-color: #111111; */
+            /* } */ 
+        </style>
+    </head>
+    <body>
+        <center>
+            <div class="container">
+            <table class="table table-hover" >
+                <tr>
+                    <th class="table-primary" colspan="2"><h1>Inteligencia artificial</h1></th>
+                </tr>
+                <tr>
+                    <th>Grupo</th>
+                    <td>Ashley Nascimento</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Cauan Siqueira</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Marlon Dantas</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Milena Ribeiro</td>
+                </tr>
+            </table>
+            
+            <br>
+
+            <table class="table table-hover" >
+                <tr>
+                    <th class="table-primary" colspan="6"><h1>Amplitude</h1></th>
+                </tr>
+                <tr>
+                    <th colspan="3">Tempo (Segundos)</th>
+                    <td colspan="3"> %%TEMPO_AMPLITUDADE%% </td>
+                </tr>
+                <tr>
+                    <th>N_node</th>
+                    <td> %%N_NODE_AMPLITUDE%% </td>
+                    <th>N_movimentos</th>
+                    <td> %%N_MOVIMENTOS%% </td>
+                    <th>E_memoria</th>
+                    <td> %%E_MEMORIA%% </td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <ul>%%MOVIMENTOS_AMPLITUDE%%</ul>
+                    </td>
+                </tr>
+            </table>
+
+            <br>
+            <table class="table table-hover" >
+                <tr>
+                    <th class="table-primary" colspan="6"><h1>Profundidade</h1></th>
+                </tr>
+                <tr>
+                    <th colspan="3">Tempo (Segundos)</th>
+                    <td colspan="3">%%TEMPO_PROFUNDIDADE%%</td>
+                </tr>
+                <tr>
+                    <th>N_node</th>
+                    <td>%%N_NODE_PROFUNDIDADE%%</td>
+                    <th>N_movimentos</th>
+                    <td>%%N_MOVIMENTOS_PROFUNDIDADE%%</td>
+                    <th>E_memoria</th>
+                    <td>%%E_MEMORIA_PROFUNDIDADE%%</td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <ul>%%MOVIMENTOS_PROFUNDIDADE%%</ul>
+                    </td>
+                </tr>
+            </table>
+            
+            <br>
+
+            <table class="table table-hover" >
+                <tr>
+                    <th class="table-primary" colspan="6"><h1>Profundidade Limitada</h1></th>
+                </tr>
+                <tr>
+                    <th colspan="3">Tempo (Segundos)</th>
+                    <td colspan="3">%%TEMPO_PROFUNDIDADE_LIMITADA%%</td>
+                </tr>
+                <tr>
+                    <th>N_node</th>
+                    <td>%%N_NODE_PROFUNDIDADE_LIMITADA%%</td>
+                    <th>N_movimentos</th>
+                    <td>%%N_MOVIMENTOS_PROFUNDIDADE_LIMITADA%%</td>
+                    <th>E_memoria</th>
+                    <td>%%E_MEMORIA_PROFUNDIDADE%%</td>
+                </tr>
+                <tr>
+                    <th colspan="3">Limite</th>
+                    <td colspan="3">%%Limite_PROFUNDIDADE_LIMITADA%%</td>
+                </tr>
+
+                <tr>
+                    <td colspan="6">
+                        <ul>%%MOVIMENTOS_PROFUNDIDADE_LIMITADA%%</ul>
+                    </td>
+                </tr>
+            </table>
+            
+            <br>
+
+            <table class="table table-hover" >
+                <tr>
+                    <th class="table-primary" colspan="6"><h1>Aprofundamento Iterativo</h1></th>
+                </tr>
+                <tr>
+                    <th colspan="3">Tempo (Segundos)</th>
+                    <td colspan="3">%%TEMPO_APROFUNDAMENTO%%</td>
+                </tr>
+                <tr>
+                    <th>N_node</th>
+                    <td>%%N_NODE_APROFUNDAMENTO%%</td>
+                    <th>N_movimentos</th>
+                    <td>%%N_MOVIMENTOS_APROFUNDAMENTO%%</td>
+                    <th>E_memoria</th>
+                    <td>%%E_MEMORIA_APROFUNDAMENTO%%</td>
+                </tr>
+
+                <tr>
+                    <th colspan="3">Limite Maximo</th>
+                    <td colspan="3">%%LIMITE_MAXIMO_PROFUNDIDADE%%</td>
+                </tr>
+
+                <tr>
+                    <td colspan="6">
+                        <ul>%%MOVIMENTOS_APROFUNDAMENTOE%%</ul>
+                    </td>
+                </tr>
+            </table>
+
+            <br>
+
+            <table class="table table-hover" >
+                <tr>
+                    <th class="table-primary" colspan="6"><h1>Bidirecional</h1></th>
+                </tr>
+                <tr>
+                    <th colspan="3">Tempo (Segundos)</th>
+                    <td colspan="3">%%TEMPO_BIDIRECIONAL%%</td>
+                </tr>
+                <tr>
+                    <th>N_node</th>
+                    <td>%%N_NODE_BIDIRECIONAL%%</td>
+                    <th>N_movimentos</th>
+                    <td>%%N_MOVIMENTOS_BIDIRECIONAL%%</td>
+                    <th>E_memoria</th>
+                    <td>%%E_MEMORIA_BIDIRECIONAL%%</td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <ul>%%MOVIMENTOS_BIDIRECIONAL%%</ul>
+                    </td>
+                </tr>
+            </table>
+
+            <br>
+
+            <table class="table table-hover" >
+                <tr>
+                    <th class="table-primary" colspan="6"><h1>Configurações do computador utilizado para a execusao</h1></th>
+                </tr>
+                <tr>
+                    <th>Sistema Operacional</th>
+                    <td>Windows 10</td>
+                </tr>
+                <tr>
+                    <th>Processador</th>
+                    <td>Intel® Core™ i5-8210U Processor(1.60 GHz up to 4.20 GHz 6 MB L3 Cache)</td>
+                </tr>
+                <tr>
+                    <th>Placa de vídeo</th>
+                    <td>NVIDIA® GeForce® MX110 Graphics com GDDR5 2GB Memória Gráfica</td>
+                </tr>
+                <tr>
+                    <th>Memória</th>
+                    <td>8GB DDR4</td>
+                </tr>
+            </table>
+        </div>
+        </center>
+    </body>
+</html>
