@@ -38,6 +38,24 @@ class metodoBusca(object):
                 #retorna uma lista de strings!
         return chaves
 
+    def gerarDistanciaManhattan(self,node_atual, node_fim):
+        #calcula a heuristica TOTAL do puzzle
+        puzzle_atual, puzzle_fim =node_atual.puzzle, node_fim.puzzle
+        saida = 0
+        if(self.debug == 1):
+            print('h= ',end='')
+        for x in range(1,9):
+            #acha o elemento numero_x no puzzle atual e comparar com o puzzle fim 
+            posicao_atual, posicao_fim = puzzle_atual.localizaValor(x),puzzle_fim.localizaValor(x)
+            # print('valor',x,'posicao_atual:',posicao_atual,'posicao_fim', posicao_fim)
+            saida = saida + ( abs(posicao_atual[0]-posicao_fim[0]) + abs(posicao_atual[1]-posicao_fim[1])  )
+            if(self.debug == 1):
+                print(str(( abs(posicao_atual[0]-posicao_fim[0]) + abs(posicao_atual[1]-posicao_fim[1])  )), '+ ',end='')
+
+        if(self.debug == 1):
+            print(' = ',saida)
+
+        return saida
 
     def amplitude(self,inicio,fim):
         tic = time.perf_counter()
@@ -95,7 +113,7 @@ class metodoBusca(object):
         amplitude_result={
             'TEMPO_AMPLITUDADE':    time.perf_counter() - tic,
             'N_NODE_AMPLITUDE' :    listona.total_nodes,
-            'E_MEMORIA':sys.getsizeof(listona),
+            'E_MEMORIA':sys.getsizeof(listona)+sys.getsizeof(fim)+sys.getsizeof(folhas)+sys.getsizeof(inicio)+sys.getsizeof(last_leaf)+sys.getsizeof(opcoes)+sys.getsizeof(opcoesFolhas)+sys.getsizeof(self)+sys.getsizeof(tic)+sys.getsizeof(x),
             'MOVIMENTOS_AMPLITUDE':list(reversed(listona.readNode(last_leaf))),
             'N_MOVIMENTOS': 0,
             'tipo':0
@@ -154,7 +172,7 @@ class metodoBusca(object):
         profundidade_result ={
             'TEMPO_PROFUNDIDADE':time.perf_counter() - tic,
             'N_NODE_PROFUNDIDADE': boardVisited.total_nodes,
-            'E_MEMORIA_PROFUNDIDADE':sys.getsizeof(boardVisited),
+            'E_MEMORIA_PROFUNDIDADE':sys.getsizeof(boardVisited)+sys.getsizeof(fim)+sys.getsizeof(inicio)+sys.getsizeof(last_leaf)+sys.getsizeof(node_atual)+sys.getsizeof(opcoesFolhas)+sys.getsizeof(path)+sys.getsizeof(saida)+sys.getsizeof(self)+sys.getsizeof(stack)+sys.getsizeof(tic),
             'N_MOVIMENTOS_PROFUNDIDADE':0,
             'MOVIMENTOS_PROFUNDIDADE':list(saida),
             'tipo':1
@@ -216,7 +234,7 @@ class metodoBusca(object):
             'TEMPO_PROFUNDIDADE_LIMITADA':time.perf_counter() - tic,
             'N_NODE_PROFUNDIDADE_LIMITADA':boardVisited.total_nodes,
             'N_MOVIMENTOS_PROFUNDIDADE_LIMITADA':0,
-            'E_MEMORIA_PROFUNDIDADE':sys.getsizeof(boardVisited),
+            'E_MEMORIA_PROFUNDIDADE':sys.getsizeof(boardVisited)+sys.getsizeof(fim)+sys.getsizeof(inicio)+sys.getsizeof(last_leaf)+sys.getsizeof(limite)+sys.getsizeof(node_atual)+sys.getsizeof(opcoesFolhas)+sys.getsizeof(path)+sys.getsizeof(self)+sys.getsizeof(stack)+sys.getsizeof(tic),
             'Limite_PROFUNDIDADE_LIMITADA':1000,
             'MOVIMENTOS_PROFUNDIDADE_LIMITADA' : list(reversed(boardVisited.readNode(last_leaf))),
             'tipo':2
@@ -276,7 +294,7 @@ class metodoBusca(object):
                         'TEMPO_APROFUNDAMENTO':time.perf_counter() -tic,
                         'N_NODE_APROFUNDAMENTO':boardVisited.total_nodes,
                         'N_MOVIMENTOS_APROFUNDAMENTO':0,
-                        'E_MEMORIA_APROFUNDAMENTO':sys.getsizeof(boardVisited),
+                        'E_MEMORIA_APROFUNDAMENTO':sys.getsizeof(boardVisited)+sys.getsizeof(fim)+sys.getsizeof(inicio)+sys.getsizeof(l_max)+sys.getsizeof(last_leaf)+sys.getsizeof(limite)+sys.getsizeof(node_atual)+sys.getsizeof(path)+sys.getsizeof(saida)+sys.getsizeof(self)+sys.getsizeof(stack)+sys.getsizeof(tic),
                         'LIMITE_MAXIMO_PROFUNDIDADE':1100,
                         'MOVIMENTOS_APROFUNDAMENTOE':list(saida),
                         'tipo':3
@@ -371,7 +389,7 @@ class metodoBusca(object):
                                     'TEMPO_BIDIRECIONAL':time.perf_counter() - tic,
                                     'N_NODE_BIDIRECIONAL':listaFim.total_nodes + listaInicio.total_nodes,
                                     'N_MOVIMENTOS_BIDIRECIONAL':0,
-                                    'E_MEMORIA_BIDIRECIONAL':sys.getsizeof(listaInicio)+sys.getsizeof(listaFim)+sys.getsizeof(listaSaida),
+                                    'E_MEMORIA_BIDIRECIONAL':sys.getsizeof(listaInicio)+sys.getsizeof(listaFim)+sys.getsizeof(listaSaida)+sys.getsizeof(fim)+sys.getsizeof(folhas_l)+sys.getsizeof(folhas_l1)+sys.getsizeof(folhas_l2)+sys.getsizeof(inicio)+sys.getsizeof(node_fim)+sys.getsizeof(nodenofim)+sys.getsizeof(opcoes)+sys.getsizeof(opcoesFolhas)+sys.getsizeof(pais)+sys.getsizeof(pais_fim)+sys.getsizeof(saida)+sys.getsizeof(self)+sys.getsizeof(tic),
                                     'MOVIMENTOS_BIDIRECIONAL':listaSaida.readAll(),
                                     'tipo':4
                                 }
@@ -419,36 +437,272 @@ class metodoBusca(object):
                         if(self.debug == 1):
                             print ("Folha add e filhos:", opcoes.id_puzzle)
 
+    def custoUniforme(self, inicio, fim):
+        tic = time.perf_counter()
+        print('Iniciando CustoUniforme()')
+
+        #Iniciando Lista 
+        listona = Blista()
+        listona.insertHead(node(inicio))
+
+        if(self.debug == 1):    
+            print ("Folha add e filhos:", listona.readHead().id_puzzle)
+            print('Next ----------------------------------------------')
+
+        #Resultado buscado
+        last_leaf = node(fim)
+
+        #Enquanto o puzzle não esta na busca continuar buscando... 
+        while (listona.readNode(last_leaf) == None):
+            folhas = listona.readLeaf()
+
+            for x in range(len(folhas)):
+                if(self.debug == 1):
+                        print("Tranalhando com a folha: ",folhas[x])
+
+                #abre todas as possibilidades do node atual
+                opcoesFolhas = self.gerarOpcoes(folhas[x])
+                folhas[x].keys = opcoesFolhas 
+
+                #adiciona o valor da folha atual
+                folhas[x].heuristica = self.gerarDistanciaManhattan(folhas[x],last_leaf)
+                folhas[x].custo = len(listona.readNode(folhas[x]))
+
+                #update da folha
+                listona.updateNode(folhas[x])
+    
+                opcoesCusto= [1000,1000,1000,1000]
+
+                opcaomenorCusto = []
+                for opcoes in range(4):
+                #busca o menor numero de heuristica
+                    if(opcoesFolhas[opcoes] != None):
+                        opcoesCusto[opcoes] = (folhas[x].custo + 1)
+                        if(opcoesCusto[opcoes] == min(opcoesCusto)):
+                            opcaomenorCusto.append(opcoesFolhas[opcoes])
+                            if(self.debug == 1):
+                                print("Menor VALOR de custo!")
+                        
+                        if(self.debug == 1 and opcoesCusto[opcoes] >1000):
+                            print("Valor maior que 1000 encontrado!")
+
+                        if(opcoesFolhas[opcoes].id_puzzle == last_leaf.id_puzzle):
+                            if(self.debug == 1):
+                                print("VALOR ENCONTRADO!")
+
+                        if(self.debug == 1):
+                            print ("Folha add e filhos:", opcoesFolhas[opcoes].id_puzzle)
+                
+                #adiciona ele e reinicia o processo
+                for nodeMenores in opcaomenorCusto:
+                    listona.insertTail(nodeMenores,self.debug)
+
+            if(self.debug == 1):
+                print('Next ----------------------------------------------')
+
+        #Mostar Caminho. 
+        if(self.debug == 1):
+            print ("Chegou no final!")
+
+        #timer!!!
+        custouniforme_result={
+            'TEMPO':    time.perf_counter() - tic,
+            'N_NODE' :    listona.total_nodes,
+            'E_MEMORIA':sys.getsizeof(listona)+sys.getsizeof(fim)+sys.getsizeof(folhas)+sys.getsizeof(inicio)+sys.getsizeof(last_leaf)+sys.getsizeof(nodeMenores)+sys.getsizeof(opcaomenorCusto)+sys.getsizeof(opcoes)+sys.getsizeof(opcoesCusto)+sys.getsizeof(opcoesFolhas)+sys.getsizeof(self)+sys.getsizeof(tic)+sys.getsizeof(x),
+            'MOVIMENTOS':list(reversed(listona.readNode(last_leaf))),
+            'N_MOVIMENTOS': 0,
+            'tipo':5
+        }
+        custouniforme_result['N_MOVIMENTOS'] = len(custouniforme_result['MOVIMENTOS'])
+        return custouniforme_result
+    
+    def greedy(self, inicio,fim):
+        tic = time.perf_counter()
+        print('Iniciando Greedy()')
+        #Iniciando Lista 
+        listona = Blista()
+        listona.insertHead(node(inicio))
+
+        if(self.debug == 1):    
+            print ("Folha add e filhos:", listona.readHead().id_puzzle)
+            print('Next ----------------------------------------------')
+
+        #Resultado buscado
+        last_leaf = node(fim)
+
+        #Enquanto o puzzle nã esta na busca continuar buscando... 
+        while (listona.readNode(last_leaf) == None):
+            folhas = listona.readLeaf()
+
+            for x in range(len(folhas)):
+                if(self.debug == 1):
+                        print("Tranalhando com a folha: ",folhas[x])
+
+                #abre todas as possibilidades do node atual
+                opcoesFolhas = self.gerarOpcoes(folhas[x])
+                folhas[x].keys = opcoesFolhas 
+
+                #adiciona o valor da folha atual
+                folhas[x].heuristica = self.gerarDistanciaManhattan(folhas[x],last_leaf)
+
+                #update da folha
+                listona.updateNode(folhas[x])
+    
+                opcoesCusto= [100,100,100,100]
+                opcaomenorCusto = []
+                for opcoes in range(4):
+                #busca o menor numero de heuristica
+                    if(opcoesFolhas[opcoes] != None):
+                        opcoesCusto[opcoes] = self.gerarDistanciaManhattan(opcoesFolhas[opcoes], last_leaf)
+                        if(opcoesCusto[opcoes] == min(opcoesCusto)):
+                            opcaomenorCusto.append(opcoesFolhas[opcoes])
+                            if(self.debug == 1):
+                                print("Menor VALOR de custo!")
+
+                        if(opcoesFolhas[opcoes].id_puzzle == last_leaf.id_puzzle):
+                            if(self.debug == 1):
+                                print("VALOR ENCONTRADO!")
+
+                        if(self.debug == 1):
+                            print ("Folha add e filhos:", opcoesFolhas[opcoes].id_puzzle)
+                
+                #adiciona ele e reinicia o processo
+                for nodeMenores in opcaomenorCusto:
+                    listona.insertTail(nodeMenores,self.debug)
+
+            if(self.debug == 1):
+                print('Next ----------------------------------------------')
+
+        #Mostar Caminho. 
+        if(self.debug == 1):
+            print ("Chegou no final!")
+
+        #timer!!!
+        greedy_result={
+            'TEMPO':    time.perf_counter() - tic,
+            'N_NODE' :    listona.total_nodes,
+            'E_MEMORIA':sys.getsizeof(listona)+sys.getsizeof(fim)+sys.getsizeof(folhas)+sys.getsizeof(inicio)+sys.getsizeof(last_leaf)+sys.getsizeof(nodeMenores)+sys.getsizeof(opcoes)+sys.getsizeof(opcoesCusto)+sys.getsizeof(opcoesFolhas)++sys.getsizeof(tic)++sys.getsizeof(self)+sys.getsizeof(x),
+            'MOVIMENTOS':list(reversed(listona.readNode(last_leaf))),
+            'N_MOVIMENTOS': 0,
+            'tipo':6
+        }
+        greedy_result['N_MOVIMENTOS'] = len(greedy_result['MOVIMENTOS'])
+        return greedy_result
+
+    def aEstrela(self, inicio,fim):
+        tic = time.perf_counter()
+        print('Iniciando A*()')
+
+        #Iniciando Lista 
+        listona = Blista()
+        listona.insertHead(node(inicio))
+
+        if(self.debug == 1):    
+            print ("Folha add e filhos:", listona.readHead().id_puzzle)
+            print('Next ----------------------------------------------')
+
+        #Resultado buscado
+        last_leaf = node(fim)
+
+        #Enquanto o puzzle não esta na busca continuar buscando... 
+        while (listona.readNode(last_leaf) == None):
+            folhas = listona.readLeaf()
+
+            for x in range(len(folhas)):
+                if(self.debug == 1):
+                        print("Tranalhando com a folha: ",folhas[x])
+
+                #abre todas as possibilidades do node atual
+                opcoesFolhas = self.gerarOpcoes(folhas[x])
+                folhas[x].keys = opcoesFolhas 
+
+                #adiciona o valor da folha atual
+                folhas[x].heuristica = self.gerarDistanciaManhattan(folhas[x],last_leaf)
+                folhas[x].custo = len(listona.readNode(folhas[x]))
+
+                #update da folha
+                listona.updateNode(folhas[x])
+    
+                opcoesCusto= [1000,1000,1000,1000]
+
+                opcaomenorCusto = []
+                for opcoes in range(4):
+                #busca o menor numero de heuristica
+                    if(opcoesFolhas[opcoes] != None):
+                        opcoesCusto[opcoes] = self.gerarDistanciaManhattan(opcoesFolhas[opcoes], last_leaf) + (folhas[x].custo + 1)
+                        if(opcoesCusto[opcoes] == min(opcoesCusto)):
+                            opcaomenorCusto.append(opcoesFolhas[opcoes])
+                            if(self.debug == 1):
+                                print("Menor VALOR de custo!")
+                        
+                        if(self.debug == 1 and opcoesCusto[opcoes] >1000):
+                            print("Valor maior que 1000 encontrado!")
+
+                        if(opcoesFolhas[opcoes].id_puzzle == last_leaf.id_puzzle):
+                            if(self.debug == 1):
+                                print("VALOR ENCONTRADO!")
+
+                        if(self.debug == 1):
+                            print ("Folha add e filhos:", opcoesFolhas[opcoes].id_puzzle)
+                
+                #adiciona ele e reinicia o processo
+                for nodeMenores in opcaomenorCusto:
+                    listona.insertTail(nodeMenores,self.debug)
+
+            if(self.debug == 1):
+                print('Next ----------------------------------------------')
+
+        #Mostar Caminho. 
+        if(self.debug == 1):
+            print ("Chegou no final!")
+
+        #timer!!!
+        aestrela_result={
+            'TEMPO':    time.perf_counter() - tic,
+            'N_NODE' :    listona.total_nodes,
+            'E_MEMORIA':sys.getsizeof(listona)+sys.getsizeof(fim)+sys.getsizeof(folhas)+sys.getsizeof(inicio)+sys.getsizeof(last_leaf)+sys.getsizeof(nodeMenores)+sys.getsizeof(opcaomenorCusto)+sys.getsizeof(opcoes)+sys.getsizeof(opcoesCusto)+sys.getsizeof(opcoesFolhas)+sys.getsizeof(self)+sys.getsizeof(tic)+sys.getsizeof(x),
+            'MOVIMENTOS':list(reversed(listona.readNode(last_leaf))),
+            'N_MOVIMENTOS': 0,
+            'tipo':7
+        }
+        aestrela_result['N_MOVIMENTOS'] = len(aestrela_result['MOVIMENTOS'])
+        return aestrela_result
+
 if __name__ == "__main__":
     
     from eightpuzzle import *
 
-    inicio = eightPuzzle([['X','2','3'],
-                          ['1','5','6'], 
-                          ['4','7','8']])
+    inicio = eightPuzzle([['2','8','3'],
+                          ['1','6','4'], 
+                          ['7','X','5']])
 
     # inicio = eightPuzzle([['1','2','3'],['4','8','5'],['7','X','6']])
 
     fim    = eightPuzzle([['1','2','3'],
-                          ['4','5','6'], 
-                          ['7','8','X']])
+                          ['8','X','4'], 
+                          ['7','6','5']])
 
     sol = metodoBusca()
+    print("aestrela")
+    # node_inicio = node(inicio)
+    # node_fim = node(fim)
+    dic_profu = sol.custoUniforme(inicio, fim)
+    # print(dic_profu)
+    print('-'*50)
 
-
-    print("Profundidade")
-    dic_profu = sol.profundidade(inicio, fim)
-    print('-'*50)
-    print("Profundidade Limitada")
-    dic_profu_limita = sol.profundidade_limitada(inicio, fim,10*4)
-    print('-'*50)
-    print("Profundidade")
-    dic_aprofudamento = sol.aprofundamento_iterativo(inicio, fim,5)
-    print('-'*50)
-    print("Profundidade")
-    dic_bidirecional = sol.bidirecional(inicio, fim)
-    print('-'*50)
-    print("Amplitude")
-    dic_amplitude = sol.amplitude(inicio,fim)      
-    print('-'*50)
-    print("FIM")
+    # print("Profundidade")
+    # dic_profu = sol.profundidade(inicio, fim)
+    # print('-'*50)
+    # print("Profundidade Limitada")
+    # dic_profu_limita = sol.profundidade_limitada(inicio, fim,10*4)
+    # print('-'*50)
+    # print("Profundidade")
+    # dic_aprofudamento = sol.aprofundamento_iterativo(inicio, fim,5)
+    # print('-'*50)
+    # print("Profundidade")
+    # dic_bidirecional = sol.bidirecional(inicio, fim)
+    # print('-'*50)
+    # print("Amplitude")
+    # dic_amplitude = sol.amplitude(inicio,fim)      
+    # print('-'*50)
+    # print("FIM")

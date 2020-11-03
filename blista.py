@@ -10,6 +10,9 @@ class node(object):
 
         self.keys = [None,None,None,None]
 
+        self.heuristica = 0
+        self.custo = 0
+
 class Blista(object):
     total_nodes = 0
 

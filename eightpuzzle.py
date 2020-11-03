@@ -78,6 +78,24 @@ class eightPuzzle(object):
         
         return espacoVazio
     
+        #Localizar espaco vazio
+    def localizaValor(self, valor):
+        espacoVazio = []
+
+        linha = 0
+        coluna = 0
+        while espacoVazio == []:
+
+            if(str(self.conteudo[linha][coluna]).upper() == str(valor)):
+                espacoVazio = [linha,coluna]
+            else:
+                coluna = coluna + 1
+            
+            if coluna == self.eixoXeY:
+                linha = linha + 1
+                coluna = 0
+        
+        return espacoVazio
     #Checar se é possivel (true) pode / (false) não pode
     def liberadaCima(self):
         espacoVazio = self.__localizarEspaco()

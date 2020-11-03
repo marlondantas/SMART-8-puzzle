@@ -44,9 +44,16 @@ class View(object):
 
 import os
 class montarView(object):
-    lista=[0,0,0,0,0]
+    lista=[0,0,0,0,0,0,0,0]
 
     saidaFile = open('view/view.html','r+',encoding='utf-8').read()
+
+    def __init__(self,inicio = '',fim =''):
+        if(inicio != ''):
+            self.saidaFile = open('view/view.html','r+',encoding='utf-8').read()
+            
+            self.saidaFile = self.saidaFile.replace('%%NODE_INICIO%%',self.prepararMovimento(str(inicio)))
+            self.saidaFile = self.saidaFile.replace('%%NODE_FIM%%',self.prepararMovimento(str(fim)))
 
     def showResults(self):
         os.system("start saida.html")
@@ -140,7 +147,52 @@ class montarView(object):
             self.saidaFile = self.saidaFile.replace('%%MOVIMENTOS_BIDIRECIONAL%%',movimentos)
             
             self.lista[4] = 1 
+        elif(dicionario['tipo'] == 5):
+            #Custo uniforme
+            self.saidaFile = self.saidaFile.replace('%%TEMPO_CUSTOUNIFORME%%',str(dicionario['TEMPO']))
+            self.saidaFile = self.saidaFile.replace('%%N_NODE_CUSTOUNIFORME%%',str(dicionario['N_NODE']))
+            self.saidaFile = self.saidaFile.replace('%%N_MOVIMENTOS_CUSTOUNIFORME%%',str(dicionario['N_MOVIMENTOS']))
+            self.saidaFile = self.saidaFile.replace('%%E_MEMORIA_CUSTOUNIFORME%%',str(dicionario['E_MEMORIA']))
+            
+            movimentos = ""
 
+            if(dicionario['MOVIMENTOS'] != []):
+                for x in dicionario['MOVIMENTOS']:
+                    movimentos = movimentos + self.prepararMovimento(x.id_puzzle)
+            self.saidaFile = self.saidaFile.replace('%%MOVIMENTOS_CUSTOUNIFORME%%',movimentos)
+            
+            self.lista[5] = 1 
+        elif(dicionario['tipo'] == 6):
+            #Greedy
+            self.saidaFile = self.saidaFile.replace('%%TEMPO_GREEDY%%',str(dicionario['TEMPO']))
+            self.saidaFile = self.saidaFile.replace('%%N_NODE_GREEDY%%',str(dicionario['N_NODE']))
+            self.saidaFile = self.saidaFile.replace('%%N_MOVIMENTOS_GREEDY%%',str(dicionario['N_MOVIMENTOS']))
+            self.saidaFile = self.saidaFile.replace('%%E_MEMORIA_GREEDY%%',str(dicionario['E_MEMORIA']))
+            
+            movimentos = ""
+
+            if(dicionario['MOVIMENTOS'] != []):
+                for x in dicionario['MOVIMENTOS']:
+                    movimentos = movimentos + self.prepararMovimento(x.id_puzzle)
+            self.saidaFile = self.saidaFile.replace('%%MOVIMENTOS_GREEDY%%',movimentos)
+            
+            self.lista[6] = 1
+
+        elif(dicionario['tipo'] == 7):
+            #Aestrela
+            self.saidaFile = self.saidaFile.replace('%%TEMPO_AESTRELA%%',str(dicionario['TEMPO']))
+            self.saidaFile = self.saidaFile.replace('%%N_NODE_AESTRELA%%',str(dicionario['N_NODE']))
+            self.saidaFile = self.saidaFile.replace('%%N_MOVIMENTOS_AESTRELA%%',str(dicionario['N_MOVIMENTOS']))
+            self.saidaFile = self.saidaFile.replace('%%E_MEMORIA_AESTRELA%%',str(dicionario['E_MEMORIA']))
+            
+            movimentos = ""
+
+            if(dicionario['MOVIMENTOS'] != []):
+                for x in dicionario['MOVIMENTOS']:
+                    movimentos = movimentos + self.prepararMovimento(x.id_puzzle)
+            self.saidaFile = self.saidaFile.replace('%%MOVIMENTOS_AESTRELA%%',movimentos)
+            
+            self.lista[7] = 1 
     def prepararMovimento(self,movimento=list):
         '''
             Faz um movimento de cada vez, retornar um string com o formato html
